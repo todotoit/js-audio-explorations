@@ -212,6 +212,12 @@ var SturmAudio = (function() {
 		}
 	}
 
+	var updateFilterFrequency = function(index, frequency) {
+		if (filters.length > 0) {
+			filters[index].frequency.value = frequency;
+		}
+	}
+
 	initAudio();
 
 	return {
@@ -225,6 +231,7 @@ var SturmAudio = (function() {
 		setRawBuffer: setRawBuffer,
 		computeFrequencyData: computeFrequencyData,
 		computeTimeData: computeTimeData,
+		updateFilterFrequency: updateFilterFrequency,
 		audioContext: audioContext,
 		micInput: micInput,
 		audioAnalyser: audioAnalyser,
