@@ -26,6 +26,7 @@ var SturmAudio = (function() {
 	var timeDataArray;
 
 	var filters = new Array();
+	var audioNodes = new Array();
 
 	function initAudio() {
 		//Init Web Audio Device
@@ -185,9 +186,7 @@ var SturmAudio = (function() {
 	//If there are filters connect device to filters otherwise connect device to audio analyser directly
 	var connectToFilter = function(device) {
 		if (filters.length > 0) {
-			for (var i=0; i<filters.length; i++) {
-				device.connect(filters[i]);
-			}
+			device.connect(filters[0]);
 		}
 		else {
 			device.connect(audioAnalyser);
@@ -215,6 +214,17 @@ var SturmAudio = (function() {
 	var updateFilterFrequency = function(index, frequency) {
 		if (filters.length > 0) {
 			filters[index].frequency.value = frequency;
+		}
+	}
+
+	//###########################################################################
+	//# NODES	
+	//###########################################################################
+	var addAudioNode = function(audioNode) {
+		audioNodes.push(audioNode);
+
+		if (audioNodes.length > 0) {
+
 		}
 	}
 
