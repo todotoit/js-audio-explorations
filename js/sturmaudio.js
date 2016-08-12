@@ -19,7 +19,7 @@ var SturmAudio = (function() {
 	var muted = false;
 
 	//Audio analysis
-	var audioAnaliser;
+	var audioAnalyser;
 	var smoothing = 0.8;
 	var fft_size = 2048;
 	var freqDataArray;
@@ -37,14 +37,14 @@ var SturmAudio = (function() {
 
 
 		//Init audio analyser
-		audioAnaliser = audioContext.createAnalyser();
-		audioAnaliser.connect(audioContext.destination);
+		audioAnalyser = audioContext.createAnalyser();
+		audioAnalyser.connect(audioContext.destination);
 
-		audioAnaliser.smoothingTimeConstant = smoothing;
-		audioAnaliser.fftSize = fft_size;
+		audioAnalyser.smoothingTimeConstant = smoothing;
+		audioAnalyser.fftSize = fft_size;
 
-		freqDataArray = new Uint8Array(audioAnaliser.frequencyBinCount);
-		timeDataArray = new Uint8Array(audioAnaliser.frequencyBinCount);
+		freqDataArray = new Uint8Array(audioAnalyser.frequencyBinCount);
+		timeDataArray = new Uint8Array(audioAnalyser.frequencyBinCount);
 	}
 
 
@@ -55,7 +55,7 @@ var SturmAudio = (function() {
 	var loadFile = function(url) {
 		if (!fileBuffer) {
 			fileBuffer = audioContext.createBufferSource();
-			fileBuffer.connect(audioAnaliser);
+			connectToFilter(fileBuffer);
 		}
 
 		var request = new XMLHttpRequest();
@@ -79,7 +79,7 @@ var SturmAudio = (function() {
 			
 			if (!fileBuffer) {
 				fileBuffer = audioContext.createBufferSource();
-				fileBuffer.connect(audioAnaliser);
+				connectToFilter(fileBuffer);
 				fileBuffer.buffer = rawBuffer;
 			}
 
@@ -143,7 +143,7 @@ var SturmAudio = (function() {
 	var getStream = function(stream) {
 		micInput = audioContext.createMediaStreamSource(stream);
 		connectToFilter(micInput);
-		//micInput.connect(audioAnaliser);
+		//micInput.connect(audioAnalyser);
 	}
 
 	//Mute/unmute microphone
@@ -159,11 +159,11 @@ var SturmAudio = (function() {
 	}
 
 	var computeFrequencyData = function() {
-		audioAnaliser.getByteFrequencyData(freqDataArray);
+		audioAnalyser.getByteFrequencyData(freqDataArray);
 	}
 
 	var computeTimeData = function() {
-		audioAnaliser.getByteTimeDomainData(timeDataArray);
+		audioAnalyser.getByteTimeDomainData(timeDataArray);
 	}
 
 	//###########################################################################
@@ -190,7 +190,7 @@ var SturmAudio = (function() {
 			}
 		}
 		else {
-			device.connect(audioAnaliser);
+			device.connect(audioAnalyser);
 		}
 	}
 
@@ -205,10 +205,10 @@ var SturmAudio = (function() {
 				filters[i].connect(filters[i+1]);
 			}
 
-			filters[filters.length-1].connect(audioAnaliser);
+			filters[filters.length-1].connect(audioAnalyser);
 		}
 		else {
-			filters[0].connect(audioAnaliser);
+			filters[0].connect(audioAnalyser);
 		}
 	}
 
@@ -227,8 +227,8 @@ var SturmAudio = (function() {
 		computeTimeData: computeTimeData,
 		audioContext: audioContext,
 		micInput: micInput,
-		audioAnaliser: audioAnaliser,
+		audioAnalyser: audioAnalyser,
 		freqDataArray: freqDataArray,
 		timeDataArray: timeDataArray
 	}
-});
+})();
