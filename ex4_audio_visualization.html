@@ -24,7 +24,7 @@
 		function test() {
 			guiEvents();
 
-			SturmAudio.createFilter('hightpass', 2000, 5, 30);
+			SturmAudio.createFilter('lowpass', 100, 5, 30);
 			SturmAudio.loadFile('assets/at_the_gates.mp3');
 			SturmAudio.initLineInInput();
 
@@ -47,6 +47,7 @@
 			var barWidth = 10;
 			var barSpacing = 2;
 
+			//Compute the sound frequency analysis and store it into freqDataArray so we can use it later in our graph
 			SturmAudio.computeFrequencyData();
 			var barCount = Math.round(WIDTH / (barWidth + barSpacing));
 			var loopStep = Math.floor(SturmAudio.freqDataArray.length / barCount);
