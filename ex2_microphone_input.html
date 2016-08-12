@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test Microphone</title>
+	<script type="text/javascript" src="js/SturmAudio.js"></script>
+</head>
+<body>
+	<button type="button" onclick="SturmAudio.mute_unmute()">Mute/Unmute Microphone</button>
+	<script type="text/javascript">
+		var sturmAudio;
+
+		function test() {
+			SturmAudio.initLineInInput();
+		}
+
+		window.onload = test();
+	</script>
+</body>
+</html>

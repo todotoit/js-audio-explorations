@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Load audio file example</title>
+	<script type="text/javascript" src="js/SturmAudio.js"></script>
+</head>
+<body>
+	<button type="button" onclick="SturmAudio.playFile()">Play</button>
+	<button type="button" onclick="SturmAudio.pauseFile()">Pause</button>
+	<button type="button" onclick="SturmAudio.stopFile()">Stop</button>
+
+	<script type="text/javascript">
+
+		function test() {
+			//Simply load the audio file
+			SturmAudio.loadFile('assets/chronocross.mp3');
+		}
+
+		window.onload = test();
+	</script>
+
+</body>
+</html>
