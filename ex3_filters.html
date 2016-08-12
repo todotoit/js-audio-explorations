@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Filters</title>
+	<script type="text/javascript" src="js/SturmAudio.js"></script>
+</head>
+<body>
+	<button type="button" onclick="SturmAudio.playFile()">Play</button>
+	<button type="button" onclick="SturmAudio.pauseFile()">Pause</button>
+	<button type="button" onclick="SturmAudio.stopFile()">Stop</button>
+	<br>
+	<button type="button" onclick="SturmAudio.mute_unmute()">Mute/Unmute Mic</button>
+	<br>
+	<input type="range" id="filter_range" min="20" max="20000" step="0.2" style="width: 400px" value="440">
+	<p id="filter_label"></p>
+
+
+	<script type="text/javascript">
+		
+		function test() {
+
+			guiEvents();
+
+			/*
+			Always create filters before loading a file or using the microphone!
+
+			parameters:
+			1. filter type
+			2. frequency
+			3. gain
+			4. quality
+			*/
+			SturmAudio.createFilter('lowpass', 20, 5, 30);
+			SturmAudio.loadFile('assets/at_the_gates.mp3');
+			SturmAudio.initLineInInput();
+		}
+
+		function guiEvents() {
+			var slider = document.getElementById('filter_range');
+			slider.addEventListener('mousemove', function() {
+				document.getElementById('filter_label').innerHTML = this.value + ' Hz';
+				SturmAudio.updateFilterFrequency(0, parseInt(this.value));
+			});
+		}
+
+		window.onload = test();
+	</script>
+</body>
+</html>
