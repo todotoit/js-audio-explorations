@@ -25,6 +25,8 @@ var SturmAudio = (function() {
 	var freqDataArray;
 	var timeDataArray;
 
+	var filters = new Array();
+
 	function initAudio() {
 		//Init Web Audio Device
 		audioContext = new AudioContext();
@@ -33,21 +35,6 @@ var SturmAudio = (function() {
 		if (!navigator.getUserMedia) 
 			navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-		navigator.getUserMedia(
-	    	{
-		        "audio": {
-		            "mandatory": {
-		                "googEchoCancellation": "false",
-		                "googAutoGainControl": "false",
-		                "googNoiseSuppression": "false",
-		                "googHighpassFilter": "false"
-		            },
-		            "optional": []
-		        },
-	    	}, getStream, function(e) {
-	        alert('Error getting audio from mic');
-	        console.log(e);
-	    	});
 
 		//Init audio analyser
 		audioAnaliser = audioContext.createAnalyser();
@@ -61,7 +48,9 @@ var SturmAudio = (function() {
 	}
 
 
-
+	//###########################################################################
+	//# AUDIO FILE LOADING AND PLAYBACK
+	//###########################################################################
 	//Asynchronously loading audio file
 	var loadFile = function(url) {
 		if (!fileBuffer) {
@@ -128,10 +117,33 @@ var SturmAudio = (function() {
 		rawBuffer = buffer;
 	}
 
+	//###########################################################################
+	//# LINE IN INPUT
+	//###########################################################################
+
+	var initLineInInput = function() {
+		navigator.getUserMedia(
+	    	{
+		        "audio": {
+		            "mandatory": {
+		                "googEchoCancellation": "false",
+		                "googAutoGainControl": "false",
+		                "googNoiseSuppression": "false",
+		                "googHighpassFilter": "false"
+		            },
+		            "optional": []
+		        },
+	    	}, getStream, function(e) {
+	        alert('Error getting audio from mic');
+	        console.log(e);
+	    	});
+	}
+
 	//Open the line-input stream
 	var getStream = function(stream) {
 		micInput = audioContext.createMediaStreamSource(stream);
-		micInput.connect(audioAnaliser);
+		connectToFilter(micInput);
+		//micInput.connect(audioAnaliser);
 	}
 
 	//Mute/unmute microphone
@@ -142,7 +154,7 @@ var SturmAudio = (function() {
 			micInput.disconnect();
 		}
 		else {
-			micInput.connect(audioAnaliser);
+			connectToFilter(micInput);
 		}
 	}
 
@@ -154,9 +166,57 @@ var SturmAudio = (function() {
 		audioAnaliser.getByteTimeDomainData(timeDataArray);
 	}
 
+	//###########################################################################
+	//# FILTERS	
+	//###########################################################################
+	
+	//Create a new filter and store in an array of filters so we can chain them later
+	var createFilter = function(type, frequency, gain, quality) {
+		var filter = audioContext.createBiquadFilter();
+		filter.type = type;
+		filter.frequency.value = frequency;
+		filter.Q.value = quality;
+		filter.gain.value = gain;
+		filters.push(filter);
+
+		refreshFilterChain();
+	}
+
+	//If there are filters connect device to filters otherwise connect device to audio analyser directly
+	var connectToFilter = function(device) {
+		if (filters.length > 0) {
+			for (var i=0; i<filters.length; i++) {
+				device.connect(filters[i]);
+			}
+		}
+		else {
+			device.connect(audioAnaliser);
+		}
+	}
+
+	//Refresh the filters chain everytime we add a new filter 
+	var refreshFilterChain = function() {
+		if (filters.length > 1) {
+			for (var i=0; i<filters.length; i++) {
+				filters[i].disconnect();
+			}
+
+			for (var i=0; i<filters.length-1; i++) {
+				filters[i].connect(filters[i+1]);
+			}
+
+			filters[filters.length-1].connect(audioAnaliser);
+		}
+		else {
+			filters[0].connect(audioAnaliser);
+		}
+	}
+
 	initAudio();
 
 	return {
+		initLineInInput: initLineInInput,
+		createFilter: createFilter,
 		loadFile: loadFile,
 		playFile: playFile,
 		pauseFile: pauseFile,
@@ -171,4 +231,4 @@ var SturmAudio = (function() {
 		freqDataArray: freqDataArray,
 		timeDataArray: timeDataArray
 	}
-})();
+});
