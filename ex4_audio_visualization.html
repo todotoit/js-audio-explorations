@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Audio Visualization</title>
+	<script type="text/javascript" src="js/SturmAudio.js"></script>
+</head>
+<body>
+	<button type="button" onclick="SturmAudio.playFile()">Play</button>
+	<button type="button" onclick="SturmAudio.pauseFile()">Pause</button>
+	<button type="button" onclick="SturmAudio.stopFile()">Stop</button>
+	<br>
+	<button type="button" onclick="SturmAudio.mute_unmute()">Mute/Unmute Mic</button>
+	<br>
+	<input type="range" id="filter_range" min="20" max="20000" step="0.2" style="width: 400px" value="440">
+	<p id="filter_label"></p>
+	<br>
+	<canvas class="visualizer"; id="audioCanvas"; width="640"; height="200"></canvas>
+	
+	<script type="text/javascript">
+		var WIDTH = 640;
+		var HEIGHT = 300;
+		var audioCanvas;
+
+		function test() {
+			guiEvents();
+
+			SturmAudio.createFilter('hightpass', 2000, 5, 30);
+			SturmAudio.loadFile('assets/at_the_gates.mp3');
+			SturmAudio.initLineInInput();
+
+			draw();
+		}
+
+		function guiEvents() {
+			audioCanvas = document.querySelector('.visualizer').getContext('2d');
+			var slider = document.getElementById('filter_range');
+			slider.addEventListener('mousemove', function() {
+				document.getElementById('filter_label').innerHTML = this.value + ' Hz';
+				SturmAudio.updateFilterFrequency(0, parseInt(this.value));
+			});
+		}
+
+		//Louder frequencies make the bar reddish, lower intensity frequencies make the bar greenish
+		function draw() {
+			audioCanvas.clearRect(0, 0, WIDTH, HEIGHT);
+			requestAnimationFrame(draw);
+			var barWidth = 10;
+			var barSpacing = 2;
+
+			SturmAudio.computeFrequencyData();
+			var barCount = Math.round(WIDTH / (barWidth + barSpacing));
+			var loopStep = Math.floor(SturmAudio.freqDataArray.length / barCount);
+
+			for (var i=0; i<barCount; i++) {
+				var barHeight = SturmAudio.freqDataArray[i * loopStep];
+				var hue = parseInt(120 * (1 - (barHeight / 255)), 10);
+				audioCanvas.fillStyle = 'hsl(' + hue + ', 75%, 50%)';
+				audioCanvas.fillRect(((barWidth + barSpacing) * i) + (barSpacing / 2), HEIGHT, barWidth - barSpacing, -barHeight);
+			}
+		}
+
+		window.onload = test();
+	</script>
+
+</body>
+</html>
