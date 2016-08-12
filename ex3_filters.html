@@ -23,12 +23,14 @@
 
 			/*
 			Always create filters before loading a file or using the microphone!
-
+			
 			parameters:
-			1. filter type
+			1. filter type (can be 'lowpass', 'highpass', 'bandpass', 'lowshelf', 'highshelf', 'peaking', 'notch', 'allpass')
 			2. frequency
 			3. gain
 			4. quality
+
+			Check this page to get more in depth infos on filters: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#Methods
 			*/
 			SturmAudio.createFilter('lowpass', 20, 5, 30);
 			SturmAudio.loadFile('assets/at_the_gates.mp3');
