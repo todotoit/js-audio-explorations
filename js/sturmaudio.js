@@ -167,6 +167,43 @@ var SturmAudio = (function() {
 		audioAnalyser.getByteTimeDomainData(timeDataArray);
 	}
 
+	//Convert frequency value to bar index
+	var convertFreqToBar = function(freq) {
+		//Max Frequency = SampleRate / 2
+		var maxFreq = audioAnalyser.context.sampleRate / 2;
+		
+		return Math.floor(freq*audioAnalyser.fftSize/maxFreq);
+	}
+
+	//Convert bar to frequency
+	var convertBarToFreq = function(bar) {
+		//Max Frequency = SampleRate / 2
+		var maxFreq = audioAnalyser.context.sampleRate / 2;
+		var barSize = maxFreq / audioAnalyser.fftSize;
+
+		return barSize * bar;
+	}
+
+	//Compute average amplitude in bar range
+	var getAverageAmplitudeInRange = function(min, max) {
+		var tot = 0;
+		for (var i=min; i<max; i++) {
+			tot += freqDataArray[i];
+		}
+
+		return tot/(max - min);;
+	}
+
+	//Compute average amplitude without limits
+	var getAverageAmplitude = function() {
+		var tot = 0;
+		for (var i=0; i<freqDataArray.length; i++) {
+			tot += freqDataArray[i];
+		}
+
+		return tot/freqDataArray.length;
+	}
+
 	//###########################################################################
 	//# FILTERS	
 	//###########################################################################
@@ -246,6 +283,10 @@ var SturmAudio = (function() {
 		micInput: micInput,
 		audioAnalyser: audioAnalyser,
 		freqDataArray: freqDataArray,
-		timeDataArray: timeDataArray
+		timeDataArray: timeDataArray,
+		getAverageAmplitudeInRange: getAverageAmplitudeInRange,
+		getAverageAmplitude: getAverageAmplitude,
+		convertFreqToBar: convertFreqToBar,
+		convertBarToFreq: convertBarToFreq
 	}
 })();
