@@ -20,7 +20,7 @@
 			//Convert bar to freq / freq to bar examples
 			console.log(SturmAudio.convertFreqToBar(200));
 			console.log(SturmAudio.convertBarToFreq(SturmAudio.convertFreqToBar(200)));
-
+			
 			draw();
 		}
 
@@ -35,7 +35,7 @@
 			//Get total average
 			var avg = SturmAudio.getAverageAmplitude();
 			//Get average in range (bar value, bar value)
-			var avg = SturmAudio.getAverageAmplitudeInRange(100, 200);
+			//var avg = SturmAudio.getAverageAmplitudeInRange(100, 200);
 
 			//Draw average bar
 			audioCanvas.fillStyle = 'hsl(' + 100 + ', 75%, 50%)';
