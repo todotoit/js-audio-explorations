@@ -6,11 +6,41 @@
 </head>
 <body>
 	<button type="button" onclick="SturmAudio.mute_unmute()">Mute/Unmute Microphone</button>
+	<br>
+	<canvas class="visualizer"; id="audioCanvas"; width="640"; height="200"></canvas>
 	<script type="text/javascript">
 		var sturmAudio;
+		var audioCanvas;
 
 		function test() {
+			audioCanvas = document.querySelector('.visualizer').getContext('2d');
 			SturmAudio.initLineInInput();
+			SturmAudio.audioAnalyser.fftSize = 1024;
+			
+			//Convert bar to freq / freq to bar examples
+			console.log(SturmAudio.convertFreqToBar(200));
+			console.log(SturmAudio.convertBarToFreq(SturmAudio.convertFreqToBar(200)));
+
+			draw();
+		}
+
+		function draw() {
+			requestAnimationFrame(draw);
+			audioCanvas.clearRect(0, 0, 640, 300);
+			var barWidth = 10;
+			var barSpacing = 2;
+		
+			SturmAudio.computeFrequencyData();
+			
+			//Get total average
+			var avg = SturmAudio.getAverageAmplitude();
+			//Get average in range (bar value, bar value)
+			var avg = SturmAudio.getAverageAmplitudeInRange(100, 200);
+
+			//Draw average bar
+			audioCanvas.fillStyle = 'hsl(' + 100 + ', 75%, 50%)';
+			audioCanvas.fillRect(((barWidth + barSpacing)) + (barSpacing / 2), 300, barWidth - barSpacing, -avg * 10);
+			
 		}
 
 		window.onload = test();
