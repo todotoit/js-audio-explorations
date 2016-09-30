@@ -8,7 +8,6 @@ var SturmAudio = (function() {
     var stereoSplitter;
     var audioMerger;
     var speakers;
-    var audioAnalysers = new Array();
 
     var lineIn = null;
     var muted = false;
@@ -20,9 +19,9 @@ var SturmAudio = (function() {
 	var fileBuffer;
 	var startedAt = 0;
 	var pausedAt = 0;
+    var elapsed = 0;
 	var playing = false;
 	var rawBuffer;
-	var playing = false;
 
     var audioAnalysers = new Array();
     var freqDataArrays = new Array();
@@ -103,7 +102,7 @@ var SturmAudio = (function() {
 
     var pauseFile = function() {
 		if (playing) {
-			var elapsed = audioContext.currentTime - startedAt;
+			elapsed = audioContext.currentTime - startedAt;
 			stopFile();
 			pausedAt = elapsed;
 		}
@@ -210,6 +209,8 @@ var SturmAudio = (function() {
         initLineInInput: initLineInInput,
         loadFile: loadFile,
         playFile: playFile,
+        playing: playing,
+        elapsed: elapsed,
         pauseFile: pauseFile,
         stopFile: stopFile,
         mute_unmute: mute_unmute,
@@ -217,6 +218,7 @@ var SturmAudio = (function() {
         getAverageAmplitude: getAverageAmplitude,
         getAverageAmplitudeInRange: getAverageAmplitudeInRange,
         convertBarToFreq: convertBarToFreq,
-        convertFreqToBar: convertFreqToBar
+        convertFreqToBar: convertFreqToBar,
+        audioAnalysers: audioAnalysers
     }
 })();
