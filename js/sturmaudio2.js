@@ -170,6 +170,30 @@ var SturmAudio = (function() {
 		return tot/freqDataArrays[index].length;
 	}
 
+    var getAverageAmplitudeInRange = function(index, min, max) {
+		var tot = 0;
+		for (var i=min; i<max; i++) {
+			tot += freqDataArrays[index][i];
+		}
+
+		return tot/(max - min);;
+	}
+
+    var convertFreqToBar = function(index, freq) {
+		//Max Frequency = SampleRate / 2
+		var maxFreq = audioAnalysers[index].context.sampleRate / 2;
+		
+		return Math.floor(freq*audioAnalysers[index].fftSize/maxFreq);
+	}
+
+    var convertBarToFreq = function(index, bar) {
+		//Max Frequency = SampleRate / 2
+		var maxFreq = audioAnalysers[index].context.sampleRate / 2;
+		var barSize = maxFreq / audioAnalysers[index].fftSize;
+
+		return barSize * bar;
+	}
+
     initAudio();
 
     return {
@@ -180,6 +204,9 @@ var SturmAudio = (function() {
         stopFile: stopFile,
         mute_unmute: mute_unmute,
         computeFrequencyData: computeFrequencyData,
-        getAverageAmplitude: getAverageAmplitude
+        getAverageAmplitude: getAverageAmplitude,
+        getAverageAmplitudeInRange: getAverageAmplitudeInRange,
+        convertBarToFreq: convertBarToFreq,
+        convertFreqToBar: convertFreqToBar
     }
 })();
