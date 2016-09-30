@@ -32,9 +32,10 @@
             var barWidth = 10;
             var barSpacing = 2;
 
-            //Compute LEFT Channell frequency 0 --> LEFT, 1 --> RIGHT
+            //Compute LEFT Channel frequency 0 --> LEFT, 1 --> RIGHT
             SturmAudio.computeFrequencyData(0);
 
+            //Get LEFT Channel frequency average
             var avg = SturmAudio.getAverageAmplitude(0);
 
             audioCanvas.fillStyle = 'hsl(' + 100 + ', 75%, 50%)';
