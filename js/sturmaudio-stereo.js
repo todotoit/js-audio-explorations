@@ -33,24 +33,32 @@ var SturmAudio = (function() {
         audioMerger = audioContext.createChannelMerger(2);
         speakers = audioContext.destination;
 
+        //LEFT Channel AudioAnalyser
         audioAnalysers.push(audioContext.createAnalyser());
+        //RIGHT Channel AudioAnalyser
         audioAnalysers.push(audioContext.createAnalyser());
         
+        //Connect left channel to left audioAnalyzer
         stereoSplitter.connect(audioAnalysers[LEFT], LEFT);
+        //Connect right channel to right audioAnalyzer
         stereoSplitter.connect(audioAnalysers[RIGHT], RIGHT);
 
+        //Connect left channel to audioMerger to get speakers feedback
         stereoSplitter.connect(audioMerger, LEFT, LEFT);
+        //Connect right channel to audioMerger to get speakers feedback
         stereoSplitter.connect(audioMerger, RIGHT, RIGHT);
         
         audioMerger.connect(speakers);
 
+        //LEFT channel frequency data array
         freqDataArrays.push(new Uint8Array(audioAnalysers[LEFT].frequencyBinCount));
+        //RIGHT channel frequency data array
         freqDataArrays.push(new Uint8Array(audioAnalysers[RIGHT].frequencyBinCount));
 
         if (!navigator.getUserMedia) 
 			navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         
-        
+
     }
 
     //###########################################################################
@@ -142,12 +150,14 @@ var SturmAudio = (function() {
     var mute_unmute = function() {
 		muted = !muted;
 
-		if (muted) {
-            lineIn.disconnect();
-		}
-		else {
-			lineIn.connect(stereoSplitter);
-		}
+        if (lineIn) {
+            if (muted) {
+                lineIn.disconnect();
+            }
+            else {
+                lineIn.connect(stereoSplitter);
+            }
+        }
 	}
 
     function errorMedia(err) {
