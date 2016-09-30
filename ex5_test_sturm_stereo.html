@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test Microphone</title>
+	<script type="text/javascript" src="js/sturmaudio-stereo.js"></script>
+</head>
+<body>
+    <button type="button" onclick="SturmAudio.playFile()">Play</button>
+	<button type="button" onclick="SturmAudio.pauseFile()">Pause</button>
+	<button type="button" onclick="SturmAudio.stopFile()">Stop</button>
+    <button type="button" onclick="SturmAudio.mute_unmute()">Mute/Unmute Microphone</button>
+    <canvas class="visualizer"; id="audioCanvas"; width="640"; height="300"></canvas>
+	<script type="text/javascript">
+		var sturmAudio;
+		var audioCanvas;
+
+		function test() {
+            audioCanvas = document.querySelector('.visualizer').getContext('2d');
+			SturmAudio.initLineInInput();
+            //SturmAudio.loadFile('assets/bravely.mp3');
+
+            console.log(SturmAudio.convertFreqToBar(0, 200));
+			console.log(SturmAudio.convertBarToFreq(0, SturmAudio.convertFreqToBar(0, 200)));
+
+
+            draw();
+		}
+
+        function draw() {
+            requestAnimationFrame(draw);
+            audioCanvas.clearRect(0, 0, 640, 300);
+            var barWidth = 10;
+            var barSpacing = 2;
+
+            SturmAudio.computeFrequencyData(0);
+
+            //var avg = SturmAudio.getAverageAmplitude(0);
+            var avg = SturmAudio.getAverageAmplitudeInRange(0, 500, 1000);
+
+            audioCanvas.fillStyle = 'hsl(' + 100 + ', 75%, 50%)';
+			//x, y, width, height
+            audioCanvas.fillRect((barWidth + barSpacing) + (barSpacing / 2), 
+                300, 
+                barWidth - barSpacing, 
+                -avg * 5);
+            console.log(-avg * 5);
+        }
+
+		window.onload = test();
+	</script>
+</body>
+</html>
