@@ -254,6 +254,25 @@ var SturmAudio = (function() {
 		}
 	}
 
+	var playFast = function(url) {
+		var request = new XMLHttpRequest();
+		var audioBuffer = audioContext.createBufferSource();
+		audioBuffer.connect(audioContext.destination);
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+
+
+		request.onload = function() {
+			audioContext.decodeAudioData(request.response, function(buffer) {
+				rawBuffer = buffer;
+				audioBuffer.buffer = buffer;
+				audioBuffer.start();
+			});
+		}
+
+		request.send();
+	}
+
 	//###########################################################################
 	//# NODES	
 	//###########################################################################
@@ -287,6 +306,7 @@ var SturmAudio = (function() {
 		getAverageAmplitudeInRange: getAverageAmplitudeInRange,
 		getAverageAmplitude: getAverageAmplitude,
 		convertFreqToBar: convertFreqToBar,
-		convertBarToFreq: convertBarToFreq
+		convertBarToFreq: convertBarToFreq,
+		playFast: playFast
 	}
 })();
